@@ -54,7 +54,12 @@ class PluginUtils(ChatCommandPlugin):
             new_plugin = twisted.plugin.retrieve_named_plugins(
                 IPlugin, [name], 'hamper.plugins', {'fresh': True})[0]
 
-            bot.factory.loader.registerPlugin(new_plugin)
+            try:
+                bot.factory.loader.registerPlugin(new_plugin)
+            except Exception, e:
+                bot.msg(
+                    comm['user'],
+                    "Failed to load %s.\n%s" % (name, e.message()))
             bot.reply(comm, 'Loading {0}.'.format(new_plugin))
             return True
 
@@ -73,6 +78,11 @@ class PluginUtils(ChatCommandPlugin):
 
             target_plugin = matched_plugins[0]
 
-            bot.factory.loader.removePlugin(target_plugin)
+            try:
+                bot.factory.loader.removePlugin(target_plugin)
+            except Exception, e:
+                bot.msg(
+                    comm['user'],
+                    "Failed to unload %s.\n%s" % (name, e.message()))
             bot.reply(comm, 'Unloading {0}.'.format(target_plugin))
             return True
