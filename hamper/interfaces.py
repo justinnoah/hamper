@@ -1,9 +1,9 @@
 import logging
 import re
 
-from zope.interface import implements, Interface, Attribute
+from zope.interface import Interface, Attribute
 from zope.interface.exceptions import DoesNotImplement
-from zope.interface.declarations import implementedBy
+from zope.interface.declarations import implementedBy, implementer
 
 from twisted.plugin import IPlugin
 
@@ -19,10 +19,10 @@ class BaseInterface(Interface):
         """Called when the factory loads the plugin."""
 
 
+@implementer(IPlugin)
 class Plugin(object):
     name = "genericplugin"
     dependencies = []
-    implements(IPlugin)
 
     def __init__(self):
         self.commands = []
@@ -46,10 +46,9 @@ class IChatPlugin(BaseInterface):
         """
 
 
+@implementer(IChatPlugin)
 class ChatPlugin(Plugin):
     """Base class for a chat plugin."""
-    implements(IChatPlugin)
-
     priority = 0
 
     def message(self, bot, comm):
@@ -99,14 +98,13 @@ class ICommand(BaseInterface):
         """This function gets called when the command is triggered."""
 
 
+@implementer(IPlugin, ICommand)
 class Command(object):
     """
     A convenience wrapper to implement a single command.
 
     To use it, define a clas that inherits from Command inside a Plugin.
     """
-    implements(IPlugin, ICommand)
-
     caseSensitive = False
     onlyDirected = True
 
@@ -146,8 +144,8 @@ class IPresencePlugin(BaseInterface):
         """Called after successfully signing on to the server."""
 
 
+@implementer(IPresencePlugin)
 class PresencePlugin(Plugin):
-    implements(IPresencePlugin)
 
     def joined(self, bot, channel):
         pass
@@ -181,8 +179,8 @@ class IPopulationPlugin(BaseInterface):
         """Called when the server finishes responding to a names request"""
 
 
+@implementer(IPopulationPlugin)
 class PopulationPlugin(Plugin):
-    implements(IPopulationPlugin)
 
     def userJoined(self, bot, user, channel):
         pass
